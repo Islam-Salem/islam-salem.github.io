@@ -84,6 +84,28 @@
   footer{text-align:center;font-size:14px;font-weight:800;margin-top:6px}
   footer a{margin:0 8px;text-decoration:none;border-bottom:2px solid rgba(20,18,31,.35)}
   footer .next{display:block;margin-bottom:10px;color:var(--muted)}
+  /* install as app */
+  .install{display:none;align-items:center;gap:12px;background:var(--sun);border:var(--b) solid var(--ink);border-radius:18px;
+    box-shadow:var(--sh);padding:12px 14px}
+  .install.show{display:flex}
+  .install img{width:46px;height:46px;flex:none}
+  .install .t{flex:1;font-weight:800;font-size:15px;line-height:1.4}
+  .install .t small{display:block;font-weight:700;font-size:13px;opacity:.75}
+  .install .go{flex:none;font:inherit;font-weight:800;font-size:15px;padding:9px 14px;border-radius:12px;cursor:pointer;
+    background:var(--ink);color:#fff;border:var(--b) solid var(--ink)}
+  .install .x{flex:none;background:none;border:none;font:inherit;font-size:22px;font-weight:800;cursor:pointer;color:var(--ink);padding:0 4px}
+  .modal{position:fixed;inset:0;background:rgba(20,18,31,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+  .modal.open{display:flex}
+  .modal .box{background:var(--paper);border:var(--b) solid var(--ink);border-radius:20px;box-shadow:6px 6px 0 var(--ink);padding:22px;max-width:400px;width:100%}
+  .modal h3{margin:0 0 12px;font-family:"Lalezar",sans-serif;font-weight:400;font-size:28px}
+  .modal .note{display:none;margin:0 0 14px;font-weight:800;background:#fff4c2;border:2px solid var(--ink);border-radius:12px;padding:10px 12px}
+  .isteps{list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:12px}
+  .isteps li{display:grid;grid-template-columns:40px 1fr;gap:10px;align-items:center;font-size:16px;font-weight:700;line-height:1.5}
+  .isteps .ic{width:40px;height:40px;border-radius:10px;border:2px solid var(--ink);display:grid;place-items:center;background:#fff8e6}
+  .isteps svg{width:22px;height:22px}
+  .modal .ok{width:100%;cursor:pointer}
+  .toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;
+    padding:10px 18px;border-radius:12px;font-weight:800;display:none;z-index:30}
 </style>
 </head>
 <body>
@@ -99,6 +121,14 @@
     <div class="txt" id="ptxt"></div>
   </div>
 
+  <!-- Install as app (hidden when already installed) -->
+  <div class="install" id="installBox">
+    <img src="icons/icon-192.png" alt="">
+    <div class="t">ثبّت «يلا دورك» على موبايلك<small>كل ألعاب اليوم في تطبيق واحد</small></div>
+    <button class="go" id="installBtn">تثبيت</button>
+    <button class="x" id="installX" aria-label="إغلاق">×</button>
+  </div>
+
   <main class="games" id="games"></main>
 
   <div class="soon">ألعاب جديدة قريبًا ✨</div>
@@ -108,6 +138,14 @@
     <a href="about.html">عن يلا دورك</a> · <a href="privacy.html">الخصوصية</a> · <a href="mailto:islamspo@gmail.com">تواصل معنا</a>
   </footer>
 </div>
+
+<div class="modal" id="guideM"><div class="box">
+  <h3 id="gTitle">ثبّت يلا دورك</h3>
+  <p class="note" id="gNote"></p>
+  <ul class="isteps" id="gSteps"></ul>
+  <button class="btn ok" id="gOk">تمام</button>
+</div></div>
+<div class="toast" id="toast"></div>
 
 <script>
 // ---------- helpers (also used by games.js) ----------
@@ -169,8 +207,79 @@ document.addEventListener("visibilitychange", () => { if(!document.hidden) rende
 window.addEventListener("pageshow", render);
 setInterval(updateNext, 60000);
 
-// installable as an app (this worker doesn't intercept anything — it just enables "install")
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+// ---------- install as app ----------
+(function(){
+  const box = $("installBox");
+  const ua = navigator.userAgent;
+  const standalone = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /android/i.test(ua);
+  const inApp = /FBAN|FBAV|FB_IAB|Instagram|Line\/|Snapchat|TikTok|musical_ly|; wv\)/i.test(ua);   // apps' built-in browsers
+  const isIOSSafari = isIOS && /safari/i.test(ua) && !/crios|fxios|edgios|gsa\//i.test(ua) && !inApp;
+  const KEY = "yd_install_x";
+  let dismissed = false; try{ dismissed = Number(localStorage.getItem(KEY) || 0) > Date.now(); }catch(e){}
+  let deferred = null;
+
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js", {scope:"/"}).catch(()=>{});
+  if(standalone) return;
+
+  // Show on every phone; on desktop only when the browser offers installing
+  if((isIOS || isAndroid) && !dismissed) box.classList.add("show");
+  window.addEventListener("beforeinstallprompt", e => {
+    e.preventDefault(); deferred = e;
+    if(!dismissed) box.classList.add("show");
+  });
+  window.addEventListener("appinstalled", () => { box.classList.remove("show"); toast("تم التثبيت 🎉"); });
+
+  const ICON = {
+    share:'<svg viewBox="0 0 24 24" fill="none" stroke="#14121f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" fill="none" stroke="#14121f" stroke-width="2.2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
+    dots:'<svg viewBox="0 0 24 24" fill="#14121f"><circle cx="12" cy="5" r="2.2"/><circle cx="12" cy="12" r="2.2"/><circle cx="12" cy="19" r="2.2"/></svg>',
+    globe:'<svg viewBox="0 0 24 24" fill="none" stroke="#14121f" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>',
+    app:'<img src="icons/icon-192.png" alt="" style="width:32px;height:32px">'
+  };
+  function guide(title, note, steps){
+    $("gTitle").textContent = title;
+    $("gNote").style.display = note ? "block" : "none";
+    $("gNote").textContent = note || "";
+    $("gSteps").innerHTML = steps.map(([ic, html]) => `<li><div class="ic">${ICON[ic]}</div><div>${html}</div></li>`).join("");
+    $("guideM").classList.add("open");
+  }
+  $("gOk").onclick = () => $("guideM").classList.remove("open");
+  $("guideM").onclick = e => { if(e.target === $("guideM")) $("guideM").classList.remove("open"); };
+
+  $("installBtn").onclick = async () => {
+    if(deferred){                                   // Android/Chrome: direct install
+      deferred.prompt();
+      const r = await deferred.userChoice.catch(()=>null);
+      deferred = null;
+      if(r && r.outcome === "accepted") box.classList.remove("show");
+      return;
+    }
+    if(inApp || (isIOS && !isIOSSafari)){
+      guide("افتح الموقع في المتصفح",
+        isIOS ? "التثبيت على الآيفون يعمل من Safari فقط." : "التطبيقات زي فيسبوك وإنستجرام لا تسمح بالتثبيت من داخلها.",
+        [["dots", "اضغط زر <b>القائمة</b> (⋯ أو ⋮) في أعلى أو أسفل الشاشة"],
+         ["globe", isIOS ? "اختر <b>«فتح في Safari»</b>" : "اختر <b>«فتح في Chrome»</b> أو «فتح في المتصفح»"],
+         ["app", "ثم اضغط «تثبيت» مرة أخرى من هناك"]]);
+    } else if(isIOS){
+      guide("ثبّته على الآيفون", "",
+        [["share", "اضغط زر <b>المشاركة</b> في شريط Safari"],
+         ["plus", "اختر <b>«إضافة إلى الشاشة الرئيسية»</b>"],
+         ["app", "اضغط <b>«إضافة»</b> — وهتلاقي «يلا دورك» على شاشتك!"]]);
+    } else {
+      guide("ثبّته على موبايلك", "",
+        [["dots", "اضغط زر <b>القائمة ⋮</b> أعلى الشاشة في Chrome"],
+         ["plus", "اختر <b>«تثبيت التطبيق»</b> أو <b>«إضافة إلى الشاشة الرئيسية»</b>"],
+         ["app", "اضغط <b>«تثبيت»</b> — وهتلاقي «يلا دورك» على شاشتك!"]]);
+    }
+  };
+  $("installX").onclick = () => {                  // hide for 14 days
+    box.classList.remove("show");
+    try{ localStorage.setItem(KEY, String(Date.now() + 14*864e5)); }catch(e){}
+  };
+})();
+function toast(t){ const el = $("toast"); el.textContent = t; el.style.display = "block"; setTimeout(() => el.style.display = "none", 2200); }
 </script>
 </body>
 </html>
