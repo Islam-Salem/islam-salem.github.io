@@ -1,0 +1,541 @@
+/* «تشكيلة المنتخب» — a floodlit match-night pitch in Egypt's colours. */
+:root {
+  --stand: #0A2416;          /* page: the dark of the stands */
+  --stand-2: #0F3220;
+  --grass-a: #1B6B3B;        /* mowing stripes */
+  --grass-b: #176034;
+  --chalk: #EEF5EC;          /* pitch lines and text on grass */
+  --chalk-soft: rgba(238, 245, 236, .72);
+  --red: #C8102E;            /* Egypt shirt */
+  --red-deep: #8E0A20;
+  --gold: #E2B444;           /* the eagle; goalkeeper shirt */
+  --ink: #101A14;            /* text on light surfaces */
+  --sheet: #F7F6F1;          /* modal sheets */
+  --sheet-line: #E1DED3;
+  --soft: #5D6B62;
+  --ok: #2E9E5B;
+  --display: "Reem Kufi", "Readex Pro", system-ui, sans-serif;
+  --text: "Readex Pro", system-ui, sans-serif;
+  color-scheme: only light;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(255, 255, 255, .10), transparent 60%),
+    linear-gradient(180deg, var(--stand-2), var(--stand) 55%);
+  background-color: var(--stand);
+  color: var(--chalk);
+  font-family: var(--text);
+  font-size: 16px;
+  line-height: 1.5;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+img { display: block; }
+
+/* ------------------------------------------------------------ header */
+.top {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: max(12px, env(safe-area-inset-top)) 16px 0;
+  display: grid;
+  grid-template-columns: 84px 1fr 84px;
+  align-items: start;
+}
+.top .side { display: flex; gap: 6px; }
+.top .side.end { justify-content: flex-end; }
+.icon-btn {
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1.5px solid rgba(238, 245, 236, .28);
+  background: transparent;
+  color: var(--chalk);
+}
+.icon-btn svg { width: 19px; height: 19px; }
+.icon-btn:hover { border-color: var(--chalk); }
+.brand { text-align: center; }
+.top { grid-template-columns: 1fr auto 1fr; }
+.team {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .82rem; font-weight: 600; color: var(--gold);
+}
+.team .flag-eg { width: 22px; height: 15px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .25); }
+.brand h1 {
+  margin: 2px 0 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 2.05rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: #fff;
+}
+.edition { margin: 0; font-size: .8rem; color: var(--chalk-soft); }
+
+/* ------------------------------------------------------------ score strip */
+.strip {
+  max-width: 520px;
+  margin: 12px auto 10px;
+  padding: 0 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  font-size: .86rem;
+}
+.cards { display: flex; align-items: center; gap: 8px; }
+.cards .lbl { color: var(--chalk-soft); }
+.card-row { display: flex; gap: 4px; direction: ltr; }
+.card {
+  width: 13px; height: 18px; border-radius: 2.5px;
+  border: 1.5px solid rgba(238, 245, 236, .45); background: rgba(238, 245, 236, .1);
+  transition: background .25s, border-color .25s, transform .25s;
+}
+.card.used { background: var(--red); border-color: var(--red); transform: rotate(-8deg); }
+.count { font-weight: 500; color: var(--chalk-soft); }
+.count b { font-weight: 700; color: #fff; }
+
+/* ------------------------------------------------------------ pitch */
+.pitch-wrap { max-width: 520px; margin: 0 auto; padding: 0 10px; }
+.pitch {
+  position: relative;
+  height: calc(var(--rows, 4) * 132px + 16px);
+  border-radius: 18px;
+  overflow: hidden;
+  background: repeating-linear-gradient(180deg, var(--grass-a) 0 8.333%, var(--grass-b) 8.333% 16.666%);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45), inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+.pitch::after {           /* floodlight falloff */
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(90% 70% at 50% 45%, transparent 55%, rgba(0, 0, 0, .28));
+}
+.lines { position: absolute; inset: 0; width: 100%; height: 100%; }
+.lines * { fill: none; stroke: rgba(238, 245, 236, .55); stroke-width: 1.6; vector-effect: non-scaling-stroke; }
+.lines .dot { fill: rgba(238, 245, 236, .55); stroke: none; }
+
+.plan {
+  position: absolute; top: 9px; inset-inline-end: 12px; z-index: 2;
+  padding: 2px 9px; border-radius: 999px;
+  font-size: .7rem; font-weight: 600; color: var(--chalk);
+  background: rgba(6, 26, 14, .55);
+}
+.formation {
+  position: absolute; inset: 0;
+  display: grid;
+  padding: 14px 2px 6px;
+  z-index: 1;
+}
+.line { display: flex; justify-content: space-evenly; align-items: center; }
+.line.n4, .line.n5 { justify-content: space-between; padding: 0 2px; }
+
+.spot {
+  width: 25%;
+  max-width: 120px;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 2px;
+  background: none; border: 0; color: inherit; text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.spot:disabled { cursor: default; }
+.shirt { position: relative; width: 50px; height: 46px; }
+.shirt svg { width: 100%; height: 100%; overflow: visible; }
+.shirt .body { fill: rgba(238, 245, 236, .13); stroke: rgba(238, 245, 236, .75); stroke-width: 1.3; }
+.shirt .trim { fill: none; stroke: rgba(238, 245, 236, .75); stroke-width: 1.3; }
+.shirt .pos {
+  position: absolute; inset: 20px 0 auto; text-align: center;
+  font-size: .6rem; font-weight: 600; line-height: 1; color: var(--chalk);
+}
+.spot:not(:disabled):hover .shirt .body { fill: rgba(238, 245, 236, .16); }
+.spot.active .shirt .body { fill: rgba(226, 180, 68, .32); stroke: var(--gold); }
+
+.spot.filled .shirt .body { fill: var(--red); stroke: #fff; stroke-width: 1.3; stroke-dasharray: none; }
+.spot.filled.gk .shirt .body { fill: var(--gold); stroke: #fff; }
+.spot.filled .shirt .trim { stroke: #fff; stroke-width: 1.6; fill: none; }
+.spot.filled .shirt .pos, .spot.missed .shirt .pos { display: none; }
+.face {
+  position: absolute; left: 50%; top: 13px; transform: translateX(-50%);
+  width: 26px; height: 26px; border-radius: 50%;
+  object-fit: cover; object-position: 50% 20%;
+  background: #fff; box-shadow: 0 0 0 2px #fff;
+}
+.face.ini {
+  display: grid; place-items: center;
+  font-family: var(--display); font-weight: 700; font-size: .8rem; color: var(--red-deep);
+}
+.spot.missed .shirt .body { fill: rgba(238, 245, 236, .16); stroke: rgba(238, 245, 236, .55); stroke-dasharray: none; }
+.spot.missed .face { filter: grayscale(1); opacity: .75; }
+
+.name {
+  margin-top: 2px;
+  max-width: 100%;
+  font-size: .72rem; font-weight: 700; line-height: 1.3;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.spot.missed .name { color: var(--chalk-soft); font-weight: 500; }
+
+.conds {
+  margin-top: 3px;
+  max-width: 100%;
+  display: grid; gap: 2px;
+  padding: 4px 4px;
+  border-radius: 7px;
+  background: rgba(6, 26, 14, .55);
+  box-shadow: inset 0 0 0 1px rgba(238, 245, 236, .12);
+}
+.cond {
+  display: flex; align-items: center; gap: 4px;
+  min-height: 16px;
+  font-size: .64rem; line-height: 1.2; font-weight: 500;
+  text-align: start;
+  color: var(--chalk);
+}
+.cond > span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.ico { flex: 0 0 auto; width: 15px; height: 15px; display: grid; place-items: center; }
+.ico img { width: 15px; height: 15px; object-fit: contain; }
+.ico img.flag { height: 11px; width: 15px; object-fit: cover; border-radius: 2px; }
+.ico svg { width: 14px; height: 14px; color: var(--gold); }
+.ico .shield {
+  width: 13px; height: 15px; border-radius: 3px 3px 7px 7px;
+  font-size: .5rem; font-weight: 700; line-height: 15px; color: #fff; text-align: center;
+}
+.spot.filled .conds { background: rgba(6, 26, 14, .35); }
+
+.spot.shake { animation: shake .4s; }
+@keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+.spot.pop .shirt { animation: pop .35s ease-out; }
+@keyframes pop { 0% { transform: scale(.7); } 70% { transform: scale(1.12); } 100% { transform: scale(1); } }
+
+/* ------------------------------------------------------------ actions */
+.actions {
+  max-width: 520px; margin: 14px auto 0; padding: 0 16px;
+  display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+}
+.btn {
+  min-height: 44px; padding: 0 20px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(238, 245, 236, .4);
+  background: transparent; color: var(--chalk);
+  font-weight: 600;
+}
+.btn.primary { background: var(--red); border-color: var(--red); color: #fff; }
+.btn.primary:hover { background: #D91636; }
+.btn.warn { border-color: var(--gold); color: var(--gold); }
+.result {
+  max-width: 520px; margin: 14px auto 0; padding: 0 16px; text-align: center;
+}
+.result h2 { margin: 0; font-size: 1.35rem; font-weight: 700; color: #fff; }
+.result p { margin: 2px 0 0; color: var(--chalk-soft); font-size: .9rem; }
+.next { font-variant-numeric: tabular-nums; }
+
+.foot {
+  max-width: 520px; margin: 26px auto 0; padding: 0 16px max(22px, env(safe-area-inset-bottom));
+  text-align: center; font-size: .78rem; color: var(--chalk-soft);
+}
+.foot a { color: var(--chalk-soft); }
+.foot nav { display: flex; gap: 14px; justify-content: center; margin-top: 6px; }
+/* links back to «يلا دورك» (the site's home page with all the games) */
+.foot .home {
+  display: inline-block; margin-bottom: 10px; padding: 5px 14px; border-radius: 999px;
+  border: 1.5px solid rgba(238, 245, 236, .35); color: var(--chalk); text-decoration: none; font-weight: 600; font-size: .85rem;
+}
+.result .more {
+  display: inline-block; margin-top: 10px; padding: 7px 16px; border-radius: 999px;
+  background: var(--gold); color: var(--ink); text-decoration: none; font-weight: 700; font-size: .9rem;
+}
+
+/* install «يلا دورك» as an app */
+.install {
+  max-width: 488px; margin: 18px auto 0; padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  border-radius: 16px; border: 1.5px solid rgba(226, 180, 68, .55);
+  background: rgba(226, 180, 68, .10);
+}
+.install[hidden] { display: none; }
+@media (max-width: 520px) { .install { margin-inline: 16px; } }
+.install img { width: 44px; height: 44px; flex: none; }
+.install .t { flex: 1; font-weight: 700; font-size: .95rem; line-height: 1.45; color: #fff; }
+.install .t small { display: block; font-weight: 500; font-size: .8rem; color: var(--chalk-soft); }
+.install .go {
+  flex: none; min-height: 40px; padding: 0 16px; border-radius: 999px; border: 0;
+  background: var(--gold); color: var(--ink); font-weight: 700;
+}
+.install .x { flex: none; width: 30px; height: 30px; padding: 4px; border: 0; background: none; color: var(--chalk-soft); }
+.install .x svg { width: 100%; height: 100%; }
+.isteps { margin: 12px 0 4px; padding-inline-start: 22px; }
+.isteps li { margin-bottom: 8px; }
+
+/* ------------------------------------------------------------ sheets (search, help, stats...) */
+.modal {
+  position: fixed; inset: 0; z-index: 20;
+  display: flex; align-items: flex-end; justify-content: center;
+  background: rgba(3, 14, 8, .62);
+}
+.modal[hidden] { display: none; }
+.sheet {
+  width: 100%; max-width: 520px; max-height: 88vh;
+  overflow: auto;
+  background: var(--sheet); color: var(--ink);
+  border-radius: 20px 20px 0 0;
+  padding: 18px 18px max(18px, env(safe-area-inset-bottom));
+  animation: up .22s ease-out;
+}
+@media (min-width: 600px) {
+  .modal { align-items: center; }
+  .sheet { border-radius: 20px; }
+}
+@keyframes up { from { transform: translateY(30px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.sheet h2 { margin: 0; font-size: 1.25rem; font-weight: 700; line-height: 1.4; }
+.close {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%;
+  border: 1.5px solid var(--sheet-line); background: #fff; color: var(--ink);
+  display: grid; place-items: center;
+}
+.close svg { width: 16px; height: 16px; }
+.sheet p, .sheet li { line-height: 1.75; }
+.sheet ul { padding-inline-start: 20px; margin: 10px 0; }
+.sheet a { color: var(--red-deep); font-weight: 600; }
+
+.ask { margin: 10px 0 12px; display: grid; gap: 6px; }
+.ask .row { display: flex; align-items: center; gap: 9px; font-weight: 600; }
+.ask .ico, .ask .ico img, .ask .ico svg { width: 22px; height: 22px; }
+.ask .ico img.flag { width: 24px; height: 16px; }
+.ask .ico .shield { width: 19px; height: 22px; font-size: .62rem; line-height: 22px; }
+.ask .pos-row { color: var(--soft); font-weight: 500; font-size: .9rem; }
+.search {
+  width: 100%; height: 48px; padding: 0 14px;
+  border-radius: 12px; border: 2px solid var(--sheet-line); background: #fff;
+  font-size: 1rem;
+}
+.search:focus { border-color: var(--red); outline: none; }
+.results { list-style: none; margin: 8px 0 0; padding: 0; min-height: 120px; }
+.results li.none { padding: 14px 4px; color: var(--soft); font-size: .92rem; }
+.results button {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  padding: 8px 6px; border: 0; border-radius: 10px; background: none; text-align: start;
+}
+.results button:hover, .results button.active { background: #ECE9DF; }
+.results button:disabled { opacity: .45; cursor: default; }
+.pic {
+  width: 40px; height: 40px; flex: 0 0 auto; border-radius: 50%;
+  object-fit: cover; object-position: 50% 20%; background: #DDD8CB;
+}
+.pic.ini { display: grid; place-items: center; font-weight: 700; color: var(--soft); }
+.who { display: grid; }
+.who-name { font-weight: 600; }
+.who-sub { font-size: .8rem; color: var(--soft); }
+.msg { min-height: 22px; margin-top: 8px; font-size: .9rem; font-weight: 600; color: var(--red-deep); }
+
+.answers { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 2px; }
+.answers li { display: flex; align-items: center; gap: 10px; padding: 6px 4px; border-radius: 10px; }
+.answers li.mine { background: #FBE5E8; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0; text-align: center; }
+.stats-grid b { display: block; font-size: 1.6rem; font-weight: 700; line-height: 1.3; }
+.stats-grid span { font-size: .78rem; color: var(--soft); }
+.archive { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; }
+.archive a {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; border-radius: 12px; background: #fff; border: 1.5px solid var(--sheet-line);
+  color: var(--ink); text-decoration: none; font-weight: 500;
+}
+.archive .st { font-size: .82rem; color: var(--soft); }
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  z-index: 40; padding: 10px 18px; border-radius: 999px;
+  background: #fff; color: var(--ink); font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+}
+.loading { text-align: center; padding: 80px 16px; color: var(--chalk-soft); }
+
+@media (max-width: 380px) {
+  .brand h1 { font-size: 1.8rem; }
+  .top { padding-inline: 12px; }
+  .icon-btn { width: 35px; height: 35px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* ------------------------------------------------------------ text pages (about, privacy, credits) */
+.doc-top { max-width: 720px; margin: 0 auto; padding: 18px 16px 12px; display: flex; justify-content: space-between; align-items: center; }
+.doc-top a { color: #fff; text-decoration: none; font-family: var(--display); font-size: 1.4rem; font-weight: 700; }
+.doc-top .play { font-family: var(--text); font-size: .9rem; font-weight: 600; padding: 7px 16px; border-radius: 999px; background: var(--red); }
+.doc {
+  max-width: 720px; margin: 0 auto 30px; padding: 22px 22px 26px;
+  background: var(--sheet); color: var(--ink); border-radius: 18px;
+}
+.doc h1 { font-family: var(--display); font-size: 1.6rem; line-height: 1.4; margin: 0 0 6px; }
+.doc h2 { font-family: var(--display); font-size: 1.15rem; line-height: 1.4; margin: 22px 0 6px; }
+.doc p, .doc li { line-height: 1.85; }
+.doc a { color: var(--red-deep); font-weight: 600; }
+.doc .muted { color: var(--soft); font-size: .9rem; }
+@media (max-width: 600px) { .doc { margin-inline: 10px; padding: 18px 16px 22px; } }
+
+/* ------------------------------------------------------------ sizes: big enough to read at a glance on a phone */
+.pitch-wrap { padding: 0 6px; }
+.pitch { height: auto; aspect-ratio: 74 / 111; }   /* a real pitch: 68 m x 105 m, plus a margin */
+.lines { width: 100%; height: 100%; }
+.formation { padding: 2.5% 0 1%; grid-template-rows: 1fr 1fr 1fr .86fr !important; }
+.line.n4, .line.n5 { padding: 0; }
+.spot { width: 25%; max-width: 132px; padding: 0 2px; }
+.line.n1 .spot, .line.n2 .spot, .line.n3 .spot { width: 32%; }
+.line.n5 .spot { width: 20%; padding: 0 1px; }
+.shirt { width: 66px; height: 61px; }
+.shirt .pos { inset-block-start: 27px; font-size: .74rem; }
+.face { width: 38px; height: 38px; top: 16px; box-shadow: 0 0 0 2.5px #fff; }
+.face.ini { font-size: 1rem; }
+.name { font-size: .92rem; margin-top: 3px; }
+.conds { width: 100%; margin-top: 4px; padding: 6px 5px; gap: 4px; border-radius: 9px; }
+.cond { font-size: .8rem; line-height: 1.25; gap: 5px; min-height: 22px; font-weight: 600; }
+.ico, .ico img { width: 21px; height: 21px; }
+.ico img.flag { width: 22px; height: 15px; }
+.ico svg { width: 19px; height: 19px; }
+.ico .shield { width: 18px; height: 21px; font-size: .66rem; line-height: 21px; }
+.plan { font-size: .8rem; padding: 3px 11px; }
+.pic { width: 48px; height: 48px; }
+
+.line.n5 .shirt { width: 56px; height: 52px; }
+.line.n5 .shirt .pos { inset-block-start: 23px; font-size: .66rem; }
+.line.n5 .face { width: 32px; height: 32px; top: 14px; }
+.line.n5 .name { font-size: .8rem; }
+.line.n5 .conds { padding: 5px 3px; gap: 3px; }
+.line.n5 .cond { font-size: .68rem; gap: 3px; }
+.line.n5 .ico, .line.n5 .ico img { width: 17px; height: 17px; }
+.line.n5 .ico img.flag { width: 18px; height: 12px; }
+.line.n5 .ico svg { width: 16px; height: 16px; }
+.line.n5 .ico .shield { width: 15px; height: 17px; line-height: 17px; font-size: .58rem; }
+
+@media (max-width: 380px) {
+  .cond { font-size: .74rem; }
+  .line.n5 .cond { font-size: .63rem; }
+  .shirt { width: 60px; height: 56px; }
+  .face { width: 34px; height: 34px; top: 15px; }
+}
+
+/* fit the 4 lines inside a real-sized pitch */
+.shirt { width: 56px; height: 52px; }
+.shirt .pos { inset-block-start: 23px; font-size: .7rem; }
+.face { width: 33px; height: 33px; top: 14px; }
+.name { margin-top: 1px; font-size: .88rem; }
+.conds { margin-top: 2px; padding: 4px 4px; gap: 2px; }
+.cond { min-height: 20px; line-height: 1.2; }
+@media (max-width: 380px) {
+  .shirt { width: 50px; height: 47px; }
+  .face { width: 29px; height: 29px; top: 13px; }
+  .shirt .pos { inset-block-start: 21px; }
+  .cond { font-size: .72rem; }
+  .ico, .ico img { width: 18px; height: 18px; }
+  .ico img.flag { width: 19px; height: 13px; }
+}
+@media (max-width: 340px) {
+  .shirt { width: 44px; height: 41px; }
+  .shirt .pos { inset-block-start: 18px; font-size: .62rem; }
+  .face { width: 25px; height: 25px; top: 11px; }
+  .name { font-size: .76rem; }
+  .conds { padding: 3px; }
+  .cond { font-size: .66rem; min-height: 17px; gap: 3px; }
+  .ico, .ico img { width: 15px; height: 15px; }
+  .ico img.flag { width: 16px; height: 11px; }
+}
+
+/* ------------------------------------------------------------ club shirts (Al Ahly / Zamalek) with one condition */
+.spot .shirt { width: 74px; height: 70px; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .35)); }
+.spot .shirt svg { width: 100%; height: 100%; }
+.spot .shirt .pos {
+  inset: auto 0 15px; font-size: .78rem; font-weight: 700; line-height: 1;
+}
+.spot.ahly .shirt .pos { color: rgba(255, 255, 255, .92); }
+.spot.zam .shirt .pos { color: #9E0B22; }
+.spot:not(.filled):not(.missed) .shirt { opacity: .93; }
+.spot.active .shirt, .spot:not(:disabled):hover .shirt { filter: drop-shadow(0 0 7px rgba(226, 180, 68, .95)); }
+.spot.missed .shirt { opacity: .5; }
+.spot.filled .shirt .pos, .spot.missed .shirt .pos { display: none; }
+.tick {
+  position: absolute; inset: auto 0 12px; margin: 0 auto;
+  width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: .85rem; font-weight: 700; line-height: 1;
+  background: var(--gold); color: #3A2A00; box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+}
+.spot .name {
+  margin-top: 2px; padding: 1px 8px; border-radius: 999px;
+  background: #fff; color: var(--ink); text-shadow: none;
+  font-size: .82rem; font-weight: 700; max-width: 100%;
+}
+.spot.missed .name { background: rgba(238, 245, 236, .2); color: var(--chalk); font-weight: 600; }
+.spot > .cond {
+  margin-top: 4px; max-width: 100%;
+  padding: 4px 7px; border-radius: 9px;
+  background: rgba(6, 26, 14, .62);
+  box-shadow: inset 0 0 0 1px rgba(238, 245, 236, .14);
+  font-size: .82rem; font-weight: 600; min-height: 0;
+}
+.spot.filled > .cond, .spot.missed > .cond { opacity: .8; }
+@media (max-width: 380px) {
+  .spot .shirt { width: 66px; height: 62px; }
+  .spot > .cond { font-size: .76rem; padding: 3px 5px; }
+}
+@media (max-width: 340px) {
+  .spot .shirt { width: 56px; height: 53px; }
+  .spot .shirt .pos { font-size: .66rem; inset-block-end: 11px; }
+  .spot > .cond { font-size: .68rem; }
+  .spot .name { font-size: .72rem; padding: 1px 6px; }
+}
+.spot .crest {
+  position: absolute; top: 24%; inset-inline-start: 22%;   /* the left chest, as worn */
+  width: 17%; height: auto; aspect-ratio: 1; object-fit: contain;
+}
+.spot.missed .shirt { opacity: .72; }
+.spot .shirt .pos { inset-block-end: 13px; }
+.spot .shirt { height: 72px; }
+.spot .crest { top: 25%; inset-inline-start: 23%; width: 15%; }
+@media (max-width: 340px) {
+  .spot .shirt { width: 52px; height: 51px; }
+  .spot .name { font-size: .7rem; margin-top: 0; }
+  .spot > .cond { margin-top: 2px; padding: 2px 5px; }
+}
+
+/* Egypt's colours under the title */
+.tri { display: flex; justify-content: center; gap: 0; margin: 4px auto 6px; width: 120px; height: 6px; border-radius: 3px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, .25); }
+.tri i { flex: 1; }
+.tri i:nth-child(1) { background: #CE1126; }
+.tri i:nth-child(2) { background: #fff; }
+.tri i:nth-child(3) { background: #000; }
+.brand h1 { margin-top: 0; }
+.top { align-items: center; }
+.brand h1 { font-size: 1.95rem; white-space: nowrap; }
+@media (max-width: 420px) { .brand h1 { font-size: 1.6rem; } .top .side { gap: 4px; } }
+@media (max-width: 350px) { .brand h1 { font-size: 1.35rem; } .icon-btn { width: 32px; height: 32px; } }
+
+/* the black "pro" shirt: played abroad, never for Al Ahly or Zamalek */
+.spot.pro .shirt .pos { color: var(--gold); display: flex; flex-direction: column; align-items: center; gap: 1px; inset-block-end: 9px; }
+.spot.pro .shirt .pos small { font-size: .6rem; font-weight: 600; }
+.spot.pro.filled .shirt .pos, .spot.pro.missed .shirt .pos { display: none; }
+.spot { min-width: 0; flex: 0 0 auto; }
+.spot .name, .spot > .cond { max-width: 100%; overflow: hidden; }
+.formation { grid-template-columns: minmax(0, 1fr); } .line { min-width: 0; }
+
+/* ------------------------------------------------------------ clearer names and answers */
+/* names are never cut: a long name wraps onto a second line */
+.spot .name {
+  white-space: normal; text-overflow: clip; overflow: visible;
+  line-height: 1.25; padding: 2px 7px; border-radius: 10px;
+  text-wrap: balance;
+}
+/* revealed answers: solid dark label with white text (was see-through) */
+.spot.missed .name {
+  background: rgba(6, 26, 14, .88); color: #fff; font-weight: 700;
+  box-shadow: inset 0 0 0 1.5px rgba(226, 180, 68, .75);
+}
+.spot.missed .shirt { opacity: .9; }
+.spot.filled > .cond, .spot.missed > .cond { opacity: 1; }
+.spot > .cond { background: rgba(6, 26, 14, .78); color: #fff; }
+/* keep the outer players and their labels off the pitch edge */
+.line.n4, .line.n5 { padding: 0 1.5%; }
+.line.n4 .spot { width: 24%; }
+.line.n5 .spot { width: 19.4%; }

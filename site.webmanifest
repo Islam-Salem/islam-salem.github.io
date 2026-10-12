@@ -8,11 +8,24 @@
   "start_url": "/?source=app",
   "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#fff3d6",
   "theme_color": "#ffd23f",
+  "categories": ["games", "entertainment"],
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "شارة البداية", "short_name": "شارة البداية", "url": "/sharatalbidaya/?source=app",
+      "icons": [{ "src": "/games/sharah.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "تشكيلة المنتخب", "short_name": "تشكيلة المنتخب", "url": "/tashkila/?source=app",
+      "icons": [{ "src": "/games/tashkila.png", "sizes": "192x192", "type": "image/png" }] }
+  ],
+  "screenshots": [
+    { "src": "/screenshots/home.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "كل ألعاب اليوم" },
+    { "src": "/screenshots/sharah.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "شارة البداية" },
+    { "src": "/screenshots/tashkila.png", "sizes": "1080x1920", "type": "image/png", "form_factor": "narrow", "label": "تشكيلة المنتخب" }
   ]
 }
