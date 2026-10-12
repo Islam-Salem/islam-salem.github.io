@@ -8,7 +8,23 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="theme-color" content="#ffd23f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+<!-- No flash: keep the page hidden until its fonts are ready and the page is built (max 2.5 s) -->
+<style>html.wait body{opacity:0}body{transition:opacity .15s}</style>
+<script>
+(function(){
+  var d = document.documentElement; d.classList.add("wait");
+  var shown = false; function show(){ if(!shown){ shown = true; d.classList.remove("wait"); } }
+  setTimeout(show, 2500);                                    // never stay hidden if fonts are slow/blocked
+  var fonts = (document.fonts && document.fonts.load)
+    ? Promise.all(["400 1em Lalezar","500 1em Tajawal","700 1em Tajawal","800 1em Tajawal"]
+        .map(function(f){ return document.fonts.load(f, "يلا دورك"); })).catch(function(){})
+    : Promise.resolve();
+  var built = new Promise(function(r){ document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", r) : r(); });
+  Promise.all([fonts, built]).then(function(){ requestAnimationFrame(show); }, show);
+})();
+</script>
 <link rel="stylesheet" href="page.css">
 <title>سياسة الخصوصية — يلا دورك</title>
 <meta name="description" content="سياسة الخصوصية لموقع يلا دورك.">
