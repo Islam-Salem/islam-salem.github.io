@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="only light">
+<title>يلا دورك — ألعاب يومية</title>
+<meta name="description" content="يلا دورك: ألعاب يومية قصيرة بالعربي. كل يوم تحدي جديد في كل لعبة.. لعبت دورك النهارده؟">
+<link rel="canonical" href="https://islam-salem.github.io/">
+
+<!-- Icons & app -->
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#ffd23f">
+<meta name="apple-mobile-web-app-title" content="يلا دورك">
+
+<!-- Link previews (WhatsApp, Facebook, X). Update the address when you move to your own domain -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="يلا دورك">
+<meta property="og:locale" content="ar_EG">
+<meta property="og:title" content="يلا دورك — ألعاب يومية">
+<meta property="og:description" content="كل يوم تحدي جديد في كل لعبة.. لعبت دورك النهارده؟">
+<meta property="og:url" content="https://islam-salem.github.io/">
+<meta property="og:image" content="https://islam-salem.github.io/og-image.jpg?v=3">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="1200">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://islam-salem.github.io/og-image.jpg?v=3">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#fff3d6; --ink:#14121f; --paper:#fff; --muted:#5b5870;
+    --sun:#ffd23f; --pink:#ff3d7f; --ok:#2ec27e;
+    --b:3px; --sh:5px 5px 0 var(--ink);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:"Tajawal",system-ui,sans-serif;color:var(--ink);min-height:100vh;
+    background:radial-gradient(circle,rgba(20,18,31,.07) 1.5px,transparent 1.6px) 0 0/20px 20px,var(--bg)}
+  a{color:inherit}
+  .wrap{max-width:560px;margin:0 auto;padding:max(18px,env(safe-area-inset-top)) 16px 40px;display:flex;flex-direction:column;gap:18px}
+
+  /* header */
+  .hero{text-align:center;padding-top:6px}
+  .logo{width:120px;height:120px;margin:0 auto -4px;display:block}
+  h1{font-family:"Lalezar",sans-serif;font-weight:400;font-size:56px;line-height:1;margin:0;text-shadow:4px 4px 0 #fff}
+  h1 span{color:var(--pink)}
+  .date{display:inline-block;margin-top:10px;background:var(--sun);border:2px solid var(--ink);border-radius:999px;
+    padding:4px 14px;font-weight:800;font-size:14px;box-shadow:2px 2px 0 var(--ink);transform:rotate(-1.5deg)}
+
+  /* today's progress */
+  .progress{background:var(--paper);border:var(--b) solid var(--ink);border-radius:18px;box-shadow:var(--sh);
+    padding:14px 16px;display:flex;align-items:center;gap:14px}
+  .progress .dots{display:flex;gap:6px;flex:none}
+  .progress .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--ink);background:#fff}
+  .progress .dot.on{background:var(--ok)}
+  .progress .txt{flex:1;font-weight:800;font-size:16px;line-height:1.4}
+  .progress .txt small{display:block;font-weight:700;font-size:13px;color:var(--muted)}
+
+  /* game cards */
+  .games{display:flex;flex-direction:column;gap:16px}
+  .card{position:relative;display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:center;text-decoration:none;
+    border:var(--b) solid var(--ink);border-radius:20px;box-shadow:var(--sh);padding:14px;transition:transform .08s}
+  .card:active{transform:translate(3px,3px);box-shadow:2px 2px 0 var(--ink)}
+  .card img{width:76px;height:76px;border-radius:18px;border:var(--b) solid var(--ink);background:#fff}
+  .card .tag{display:inline-block;font-size:12px;font-weight:800;background:rgba(255,255,255,.85);color:var(--ink);
+    border:2px solid var(--ink);border-radius:999px;padding:1px 9px;margin-bottom:4px}
+  .card h2{font-family:"Lalezar",sans-serif;font-weight:400;font-size:28px;line-height:1.15;margin:0}
+  .card p{margin:2px 0 0;font-size:15px;font-weight:700;opacity:.85;line-height:1.5}
+  .card .go{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:2px}
+  .btn{font:inherit;font-weight:800;font-size:16px;background:var(--sun);color:var(--ink);border:var(--b) solid var(--ink);
+    border-radius:12px;padding:8px 16px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+  .state{font-size:14px;font-weight:800;border-radius:999px;padding:4px 12px;border:2px solid var(--ink);background:#fff;color:var(--ink)}
+  .state.done{background:var(--ok);color:#fff}
+  .state.started{background:#fff0b3}
+
+  .soon{border:var(--b) dashed rgba(20,18,31,.45);border-radius:20px;padding:16px;text-align:center;font-weight:800;color:var(--muted)}
+
+  footer{text-align:center;font-size:14px;font-weight:800;margin-top:6px}
+  footer a{margin:0 8px;text-decoration:none;border-bottom:2px solid rgba(20,18,31,.35)}
+  footer .next{display:block;margin-bottom:10px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <img class="logo" src="icons/icon-192.png" alt="">
+    <h1><span>يلا</span> دورك</h1>
+    <div class="date" id="date"></div>
+  </header>
+
+  <div class="progress" id="progress">
+    <div class="dots" id="dots"></div>
+    <div class="txt" id="ptxt"></div>
+  </div>
+
+  <main class="games" id="games"></main>
+
+  <div class="soon">ألعاب جديدة قريبًا ✨</div>
+
+  <footer>
+    <span class="next" id="next"></span>
+    <a href="about.html">عن يلا دورك</a> · <a href="privacy.html">الخصوصية</a> · <a href="mailto:islamspo@gmail.com">تواصل معنا</a>
+  </footer>
+</div>
+
+<script>
+// ---------- helpers (also used by games.js) ----------
+function readJSON(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }
+function cairoToday(){ return new Intl.DateTimeFormat("en-CA",{timeZone:"Africa/Cairo"}).format(new Date()); }
+function dayNumber(start){
+  const toUTC = s => { const [y,m,d] = s.split("-").map(Number); return Date.UTC(y, m-1, d); };
+  return Math.max(1, Math.floor((toUTC(cairoToday()) - toUTC(start)) / 86400000) + 1);
+}
+</script>
+<script src="games.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const STATE_TXT = { done:"✓ لعبتها النهارده", started:"⏳ كمّلها", new:"لسه ما لعبتهاش" };
+const BTN_TXT   = { done:"شوف نتيجتك", started:"كمّل ▶", new:"العب ▶" };
+
+function statusOf(g){ try{ return g.status ? g.status() : "new"; }catch(e){ return "new"; } }
+
+function render(){
+  // date
+  $("date").textContent = new Date().toLocaleDateString("ar-EG",{weekday:"long",day:"numeric",month:"long",timeZone:"Africa/Cairo"});
+
+  // cards
+  const box = $("games"); box.innerHTML = "";
+  let done = 0;
+  GAMES.forEach(g => {
+    const st = statusOf(g); if(st === "done") done++;
+    const a = document.createElement("a");
+    a.className = "card"; a.href = g.url;
+    a.style.background = g.color; a.style.color = g.ink;
+    a.innerHTML = `<img src="${g.icon}" alt="">
+      <div><span class="tag"></span><h2></h2><p></p></div>
+      <div class="go"><span class="state ${st}">${STATE_TXT[st]}</span><span class="btn">${BTN_TXT[st]}</span></div>`;
+    a.querySelector(".tag").textContent = g.tag || "";
+    a.querySelector("h2").textContent = g.name;
+    a.querySelector("p").textContent = g.desc;
+    box.appendChild(a);
+  });
+
+  // today's progress
+  const n = GAMES.length;
+  $("dots").innerHTML = GAMES.map((g,i) => `<span class="dot ${i < done ? "on" : ""}"></span>`).join("");
+  $("ptxt").innerHTML = done === n
+    ? `خلّصت دورك النهارده! 🎉<small>ارجع بكرة لتحديات جديدة</small>`
+    : done === 0
+      ? `يلا دورك! 👋<small>عندك ${n} ألعاب النهارده</small>`
+      : `لعبت ${done} من ${n} النهارده<small>فاضل ${n - done}.. يلا كمّل!</small>`;
+  updateNext();
+}
+function updateNext(){
+  const cairo = new Date(new Date().toLocaleString("en-US",{timeZone:"Africa/Cairo"}));
+  const mid = new Date(cairo); mid.setHours(24,0,0,0);
+  const ms = mid - cairo, h = Math.floor(ms/3.6e6), m = Math.floor(ms%3.6e6/6e4);
+  $("next").textContent = `التحديات الجديدة بعد ${h} ساعة و ${m} دقيقة`;
+}
+render();
+// refresh when coming back to the tab (e.g. after playing a game) and every minute
+document.addEventListener("visibilitychange", () => { if(!document.hidden) render(); });
+window.addEventListener("pageshow", render);
+setInterval(updateNext, 60000);
+
+// installable as an app (this worker doesn't intercept anything — it just enables "install")
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
