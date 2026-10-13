@@ -1,34 +1,37 @@
-name: Add new clips
+name: Add new clips (شارة البداية)
 
-# Runs whenever something is uploaded to the clips folder.
+# Runs whenever something is uploaded to sharatalbidaya/clips
 on:
   push:
     paths:
-      - "clips/**"
-  workflow_dispatch:
+      - "sharatalbidaya/clips/**"
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
 
 permissions:
   contents: write
 
-concurrency: add-clips
+concurrency:
+  group: add-clips
+  cancel-in-progress: false
 
 jobs:
   add:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Rename clips and add them to songs.js
-        run: python3 .github/scripts/add_clips.py
+        run: python3 .github/scripts/add-clips.py
 
       - name: Save changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A clips songs.js
+          git add -A sharatalbidaya/clips sharatalbidaya/songs.js
           if git diff --cached --quiet; then
             echo "Nothing new to add."
-            exit 0
+          else
+            git commit -m "sharatalbidaya: add new clips"
+            git pull --rebase --autostash   # files uploaded while this ran are kept
+            git push
           fi
-          git commit -m "Add new clips"
-          git push
