@@ -1,7 +1,7 @@
 """
 add_clips.py — run automatically by GitHub (see .github/workflows/add-clips.yml).
 
-Upload a clip into the "clips" folder named like:
+Upload a clip into  sharatalbidaya/clips  named like:
     Title - YouTubeID - StartSecond.mp3
     e.g.  مارتن مستري - sO_371leHlo - 1.mp3
 and this script will:
@@ -13,7 +13,7 @@ and this script will:
 import json, re, sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[2] / "sharatalbidaya"   # the game's folder in the site repo
 CLIPS = ROOT / "clips"
 SONGS_JS = ROOT / "songs.js"
 
