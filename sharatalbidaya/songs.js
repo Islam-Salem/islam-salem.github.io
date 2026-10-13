@@ -76,6 +76,7 @@ const SONGS = [
   { title: "سيف النار", aliases: [], youtube: "i_nF5pFlDaY", start: 4 },
   { title: "أناستازيا", aliases: ["anastasia"], youtube: "SwDBisuEsJg", start: 0 },
   { title: "المحقق كونان", aliases: ["detective conan", "كونان"], youtube: "CHAqIZ1Yl90", start: 0 },
+  { title: "مارتن مستري", aliases: [], youtube: "sO_371leHlo", start: 1 },
 ];
 
 // =====================================================================
