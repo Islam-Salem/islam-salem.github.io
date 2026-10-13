@@ -1,0 +1,34 @@
+name: Add new clips
+
+# Runs whenever something is uploaded to the clips folder.
+on:
+  push:
+    paths:
+      - "clips/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: add-clips
+
+jobs:
+  add:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rename clips and add them to songs.js
+        run: python3 .github/scripts/add_clips.py
+
+      - name: Save changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A clips songs.js
+          if git diff --cached --quiet; then
+            echo "Nothing new to add."
+            exit 0
+          fi
+          git commit -m "Add new clips"
+          git push
