@@ -79,6 +79,14 @@ const SONGS = [
   { title: "مارتن مستري", aliases: [], youtube: "sO_371leHlo", start: 1 },
   { title: "مغامرات نغم", aliases: [], youtube: "2QbKVD2DjTM", start: 9 },
   { title: "مغامرات توم سوير", aliases: [], youtube: "WVB-NgP62Nk", start: 0 },
+  { title: "الكابتن رابح", aliases: [], youtube: "yjKXmd2V6CU", start: 6 },
+  { title: "المخترع الصغير كرم", aliases: [], youtube: "SLJLhT4y1mk", start: 2 },
+  { title: "المفتش فابر", aliases: [], youtube: "91whbV9VEqg", start: 2 },
+  { title: "ايميلي", aliases: [], youtube: "_McjTc1Qp9s", start: 0 },
+  { title: "تاما والأصدقاء", aliases: [], youtube: "HdyhGiVhQNE", start: 6 },
+  { title: "صانع السلام", aliases: [], youtube: "XRBqY5KlvVY", start: 2 },
+  { title: "فولترن", aliases: [], youtube: "773xBU6pQvM", start: 0 },
+  { title: "في جعبتي حكايا", aliases: [], youtube: "cmnKTBiffiI", start: 9 },
 ];
 
 // =====================================================================
