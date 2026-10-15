@@ -102,7 +102,6 @@ const SONGS = [
   { title: "شما في البراري الخضراء", aliases: [], youtube: "FdrYTzJMfy0", start: 0 },
   { title: "صاحب الظل الطويل", aliases: [], youtube: "QX3V2jUbk5w", start: 12 },
   { title: "فلة والأقزام السبعة", aliases: [], youtube: "7wY71p7tC_Y", start: 0 },
-  { title: "فيروزة", aliases: [], youtube: "Qg8OVfI4mYo", start: 1 },
   { title: "كرش جير", aliases: [], youtube: "qQK-VtU8FiA", start: 8 },
   { title: "كوكب أبجد", aliases: [], youtube: "_Y27AAE29rc", start: 2 },
   { title: "كوكب أكشن", aliases: [], youtube: "JX4fvH6GG2A", start: 16 },
