@@ -87,6 +87,7 @@ const SONGS = [
   { title: "صانع السلام", aliases: [], youtube: "XRBqY5KlvVY", start: 2 },
   { title: "فولترن", aliases: [], youtube: "773xBU6pQvM", start: 0 },
   { title: "في جعبتي حكايا", aliases: [], youtube: "cmnKTBiffiI", start: 9 },
+  { title: "لا تبكي يا صغيري", aliases: [], youtube: "0fKox9_pGK8", start: 67 },
 ];
 
 // =====================================================================
